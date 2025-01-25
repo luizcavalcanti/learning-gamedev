@@ -28,12 +28,6 @@ typedef struct {
 } size;
 
 typedef struct {
-    float v;
-    float h;
-} velocity;
-
-typedef struct {
-    velocity vel;
     position pos;
     size size;
     SDL_Texture *sprite;
@@ -78,9 +72,6 @@ int main(int argc, char *argv[]) {
 }
 
 void update(void) {
-    player.pos.x += player.vel.h;
-    player.pos.y += player.vel.v;
-
     int lowerBound = SCREEN_HEIGHT - player.size.h;
     int rightBound = SCREEN_WIDTH - player.size.w;
     if (player.pos.x >= rightBound)
@@ -111,23 +102,18 @@ void processInput(SDL_Event e) {
     if (e.type == SDL_KEYDOWN) {
         switch(e.key.keysym.sym) {
         case SDLK_UP:
-            player.vel.v--;
+            player.pos.y--;
             break;
         case SDLK_DOWN:
-            player.vel.v++;
+            player.pos.y++;
             break;
         case SDLK_LEFT:
-            player.vel.h--;
+            player.pos.x--;
             break;
         case SDLK_RIGHT:
-            player.vel.h++;
+            player.pos.x++;
             break;
         }
-        int maxVel = 1;
-        player.vel.v = player.vel.v > maxVel ? maxVel : player.vel.v;
-        player.vel.v = player.vel.v < -maxVel ? -maxVel : player.vel.v;
-        player.vel.h = player.vel.h > maxVel ? maxVel : player.vel.h;
-        player.vel.h = player.vel.h < -maxVel ? -maxVel : player.vel.h;
     }
 }
 
