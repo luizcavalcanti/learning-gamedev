@@ -8,7 +8,7 @@ bool init(void);
 bool loadAssets(void);
 void destroy(void);
 
-void processInput(SDL_Event e);
+void processInput();
 void render(void);
 void update(void);
 
@@ -28,6 +28,12 @@ typedef struct {
 } size;
 
 typedef struct {
+    float h;
+    float v;
+} velocity;
+
+typedef struct {
+    velocity vel;
     position pos;
     size size;
     SDL_Texture *sprite;
@@ -43,7 +49,8 @@ SDL_Renderer *gRenderer = NULL;
 SDL_Texture *gTexture = NULL;
 object player = {
     .size = { 50, 50 },
-    .pos = { 0, 0 }
+    .pos = { 0, 0 },
+    .vel = { 3, 3 }
 };
 
 
@@ -60,8 +67,8 @@ int main(int argc, char *argv[]) {
             if (e.type == SDL_QUIT) {
                 quit = true;
             }
-            processInput(e);
         }
+        processInput();
         update();
         render();
     }
@@ -98,23 +105,16 @@ void render(void) {
     SDL_RenderPresent(gRenderer);
 }
 
-void processInput(SDL_Event e) {
-    if (e.type == SDL_KEYDOWN) {
-        switch(e.key.keysym.sym) {
-        case SDLK_UP:
-            player.pos.y--;
-            break;
-        case SDLK_DOWN:
-            player.pos.y++;
-            break;
-        case SDLK_LEFT:
-            player.pos.x--;
-            break;
-        case SDLK_RIGHT:
-            player.pos.x++;
-            break;
-        }
-    }
+void processInput() {
+    const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+    if (currentKeyStates[SDL_SCANCODE_UP])
+        player.pos.y -= player.vel.v;
+    if (currentKeyStates[SDL_SCANCODE_DOWN])
+        player.pos.y += player.vel.v;
+    if (currentKeyStates[SDL_SCANCODE_LEFT])
+        player.pos.x -= player.vel.h;
+    if (currentKeyStates[SDL_SCANCODE_RIGHT])
+        player.pos.x += player.vel.h;
 }
 
 bool init(void) {
