@@ -8,7 +8,7 @@ bool init(void);
 bool loadAssets(void);
 void destroy(void);
 
-void processInput();
+void processInput(void);
 void render(void);
 void update(void);
 
@@ -46,11 +46,11 @@ const int SCREEN_HEIGHT = 720;
 // Global vars
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
-SDL_Texture *gTexture = NULL;
+SDL_Texture *gBackgroundTexture = NULL;
 object player = {
     .size = { 50, 50 },
     .pos = { 0, 0 },
-    .vel = { 3, 3 }
+    .vel = { 1.5f, 1.5f }
 };
 
 
@@ -97,7 +97,7 @@ void render(void) {
     SDL_RenderClear(gRenderer);
 
     // Draw
-    SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
+    SDL_RenderCopy(gRenderer, gBackgroundTexture, NULL, NULL);
     SDL_Rect playerPos = { player.pos.x, player.pos.y, player.size.w, player.size.h };
     SDL_RenderCopy(gRenderer, player.sprite, NULL, &playerPos);
 
@@ -105,7 +105,7 @@ void render(void) {
     SDL_RenderPresent(gRenderer);
 }
 
-void processInput() {
+void processInput(void) {
     const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
     if (currentKeyStates[SDL_SCANCODE_UP])
         player.pos.y -= player.vel.v;
@@ -144,8 +144,8 @@ bool init(void) {
 }
 
 bool loadAssets(void) {
-    gTexture = loadTexture("../assets/texture.jpg");
-    if (gTexture == NULL)
+    gBackgroundTexture = loadTexture("../assets/texture.jpg");
+    if (gBackgroundTexture == NULL)
         return false;
 
     SDL_Texture *playerTexture = loadTexture("../assets/player.png");
@@ -157,8 +157,8 @@ bool loadAssets(void) {
 }
 
 void destroy(void) {
-    SDL_DestroyTexture(gTexture);
-    gTexture = NULL;
+    SDL_DestroyTexture(gBackgroundTexture);
+    gBackgroundTexture = NULL;
 
     SDL_DestroyRenderer(gRenderer);
     SDL_DestroyWindow(gWindow);
