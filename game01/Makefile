@@ -4,4 +4,4 @@ compile:
 	cd build && meson compile
 
 run: compile
-	./build/game01
+	cd build && ./game01
