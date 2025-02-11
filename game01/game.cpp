@@ -25,7 +25,7 @@ typedef struct {
 typedef struct {
     float w;
     float h;
-} size;
+} objsize;
 
 typedef struct {
     float h;
@@ -35,7 +35,7 @@ typedef struct {
 typedef struct {
     velocity vel;
     position pos;
-    size size;
+    objsize size;
     SDL_Texture *sprite;
 } object;
 
@@ -47,10 +47,11 @@ const int SCREEN_HEIGHT = 720;
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
 SDL_Texture *gBackgroundTexture = NULL;
+
 object player = {
-    .size = { 50, 50 },
-    .pos = { 0, 0 },
-    .vel = { 1.5f, 1.5f }
+    .vel = { 1.5f, 1.5f },
+    .pos = { 0.0f, 0.0f },
+    .size = { 50, 50 }
 };
 
 
@@ -98,7 +99,7 @@ void render(void) {
 
     // Draw
     SDL_RenderCopy(gRenderer, gBackgroundTexture, NULL, NULL);
-    SDL_Rect playerPos = { player.pos.x, player.pos.y, player.size.w, player.size.h };
+    SDL_Rect playerPos = { (int)player.pos.x, (int)player.pos.y, (int)player.size.w, (int)player.size.h };
     SDL_RenderCopy(gRenderer, player.sprite, NULL, &playerPos);
 
     // Render back buffer
