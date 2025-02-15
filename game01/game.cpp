@@ -3,6 +3,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include "game_object.h"
+#include "utils.h"
+
 // game lifecycle
 bool init(void);
 bool loadAssets(void);
@@ -12,34 +15,6 @@ void processInput(void);
 void render(void);
 void update(void);
 
-// assets management
-SDL_Surface *loadSurface(const char *path);
-SDL_Texture *loadTexture(const char *path);
-
-// Types
-typedef struct {
-    float x;
-    float y;
-} position;
-
-typedef struct {
-    float w;
-    float h;
-} objsize;
-
-typedef struct {
-    float h;
-    float v;
-} velocity;
-
-typedef struct {
-    velocity vel;
-    position pos;
-    objsize size;
-    SDL_Texture *sprite;
-} object;
-
-
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
@@ -48,12 +23,7 @@ SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
 SDL_Texture *gBackgroundTexture = NULL;
 
-object player = {
-    .vel = { 1.5f, 1.5f },
-    .pos = { 0.0f, 0.0f },
-    .size = { 50, 50 }
-};
-
+GameObject player = GameObject();
 
 int main(int argc, char *argv[]) {
     if (!(init() && loadAssets())) {
@@ -80,16 +50,16 @@ int main(int argc, char *argv[]) {
 }
 
 void update(void) {
-    int lowerBound = SCREEN_HEIGHT - player.size.h;
-    int rightBound = SCREEN_WIDTH - player.size.w;
-    if (player.pos.x >= rightBound)
-        player.pos.x = rightBound;
-    if (player.pos.x < 0)
-        player.pos.x = 0;
-    if (player.pos.y >= lowerBound)
-        player.pos.y = lowerBound;
-    if (player.pos.y < 0)
-        player.pos.y = 0;
+    int lowerBound = SCREEN_HEIGHT - player.size.x;
+    int rightBound = SCREEN_WIDTH - player.size.y;
+    if (player.position.x >= rightBound)
+        player.position.x = rightBound;
+    if (player.position.x < 0)
+        player.position.x = 0;
+    if (player.position.y >= lowerBound)
+        player.position.y = lowerBound;
+    if (player.position.y < 0)
+        player.position.y = 0;
 }
 
 void render(void) {
@@ -99,7 +69,7 @@ void render(void) {
 
     // Draw
     SDL_RenderCopy(gRenderer, gBackgroundTexture, NULL, NULL);
-    SDL_Rect playerPos = { (int)player.pos.x, (int)player.pos.y, (int)player.size.w, (int)player.size.h };
+    SDL_Rect playerPos = { (int)player.position.x, (int)player.position.y, (int)player.size.x, (int)player.size.y };
     SDL_RenderCopy(gRenderer, player.sprite, NULL, &playerPos);
 
     // Render back buffer
@@ -109,13 +79,13 @@ void render(void) {
 void processInput(void) {
     const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
     if (currentKeyStates[SDL_SCANCODE_UP])
-        player.pos.y -= player.vel.v;
+        player.position.y -= player.velocity.y;
     if (currentKeyStates[SDL_SCANCODE_DOWN])
-        player.pos.y += player.vel.v;
+        player.position.y += player.velocity.y;
     if (currentKeyStates[SDL_SCANCODE_LEFT])
-        player.pos.x -= player.vel.h;
+        player.position.x -= player.velocity.x;
     if (currentKeyStates[SDL_SCANCODE_RIGHT])
-        player.pos.x += player.vel.h;
+        player.position.x += player.velocity.x;
 }
 
 bool init(void) {
@@ -145,11 +115,11 @@ bool init(void) {
 }
 
 bool loadAssets(void) {
-    gBackgroundTexture = loadTexture("../assets/texture.jpg");
+    gBackgroundTexture = Utils::loadTexture("../assets/texture.jpg", gRenderer);
     if (gBackgroundTexture == NULL)
         return false;
 
-    SDL_Texture *playerTexture = loadTexture("../assets/player.png");
+    SDL_Texture *playerTexture = Utils::loadTexture("../assets/player.png", gRenderer);
     if (playerTexture == NULL)
         return false;
     player.sprite = playerTexture;
@@ -168,19 +138,4 @@ void destroy(void) {
 
     IMG_Quit();
     SDL_Quit();
-}
-
-SDL_Texture *loadTexture(const char *path) {
-    SDL_Texture *texture = NULL;
-    SDL_Surface *image = IMG_Load(path);
-
-    if (image == NULL)
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load asset at %s! SDL error: %s", path, SDL_GetError());
-
-    texture = SDL_CreateTextureFromSurface(gRenderer, image);
-    if (texture == NULL)
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture from %s! SDL error: %s", path, SDL_GetError());
-
-    SDL_FreeSurface(image);
-    return texture;
 }
