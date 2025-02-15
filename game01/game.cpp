@@ -1,7 +1,5 @@
-#include <SDL.h>
-#include <SDL_image.h>
-#include <stdbool.h>
-#include <stdio.h>
+#include "SDL_render.h"
+#include "SDL_video.h"
 
 #include "game_object.h"
 #include "utils.h"
@@ -24,6 +22,7 @@ SDL_Renderer *gRenderer = NULL;
 SDL_Texture *gBackgroundTexture = NULL;
 
 GameObject player = GameObject();
+GameObject enemy = GameObject();
 
 int main(int argc, char *argv[]) {
     if (!(init() && loadAssets())) {
@@ -49,6 +48,18 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+void processInput(void) {
+    const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+    if (currentKeyStates[SDL_SCANCODE_UP])
+        player.position.y -= player.velocity.y;
+    if (currentKeyStates[SDL_SCANCODE_DOWN])
+        player.position.y += player.velocity.y;
+    if (currentKeyStates[SDL_SCANCODE_LEFT])
+        player.position.x -= player.velocity.x;
+    if (currentKeyStates[SDL_SCANCODE_RIGHT])
+        player.position.x += player.velocity.x;
+}
+
 void update(void) {
     int lowerBound = SCREEN_HEIGHT - player.size.x;
     int rightBound = SCREEN_WIDTH - player.size.y;
@@ -69,23 +80,11 @@ void render(void) {
 
     // Draw
     SDL_RenderCopy(gRenderer, gBackgroundTexture, NULL, NULL);
-    SDL_Rect playerPos = { (int)player.position.x, (int)player.position.y, (int)player.size.x, (int)player.size.y };
-    SDL_RenderCopy(gRenderer, player.sprite, NULL, &playerPos);
+    SDL_RenderCopy(gRenderer, player.sprite, NULL, player.getRenderRect());
+    SDL_RenderCopy(gRenderer, enemy.sprite, NULL, enemy.getRenderRect());
 
     // Render back buffer
     SDL_RenderPresent(gRenderer);
-}
-
-void processInput(void) {
-    const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
-    if (currentKeyStates[SDL_SCANCODE_UP])
-        player.position.y -= player.velocity.y;
-    if (currentKeyStates[SDL_SCANCODE_DOWN])
-        player.position.y += player.velocity.y;
-    if (currentKeyStates[SDL_SCANCODE_LEFT])
-        player.position.x -= player.velocity.x;
-    if (currentKeyStates[SDL_SCANCODE_RIGHT])
-        player.position.x += player.velocity.x;
 }
 
 bool init(void) {
@@ -123,6 +122,7 @@ bool loadAssets(void) {
     if (playerTexture == NULL)
         return false;
     player.sprite = playerTexture;
+    enemy.sprite = playerTexture;
 
     return true;
 }

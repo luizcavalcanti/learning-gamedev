@@ -8,5 +8,12 @@ GameObject::GameObject() {
     velocity.y = 1;
     size.x = 50;
     size.y = 50;
-    // SDL_Texture *sprite;
+}
+
+SDL_Rect *GameObject::getRenderRect() {
+  renderRect.x = position.x;
+  renderRect.y = position.y;
+  renderRect.w = size.x;
+  renderRect.h = size.y;
+  return &renderRect;
 }

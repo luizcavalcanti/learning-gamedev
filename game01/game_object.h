@@ -5,13 +5,18 @@
 #include <SDL_image.h>
 
 class GameObject {
-public:
+ public:
     GameObject();
-  
+
+    SDL_Rect *getRenderRect();
+
     SDL_Point position;
     SDL_Point velocity;
     SDL_Point size;
     SDL_Texture *sprite;
+
+ private:
+    SDL_Rect renderRect;
 };
 
 #endif
