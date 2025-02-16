@@ -7,16 +7,19 @@
 class GameObject {
 public:
   GameObject();
+  ~GameObject();
 
-  SDL_Rect *getRenderRect();
-  void move(SDL_Rect *boundaries);
-
+  int speed;
   SDL_Point position;
   SDL_Point velocity;
   SDL_Point size;
   SDL_Texture *sprite;
 
-private:
+  SDL_Rect *getRenderRect(void);
+  void update(void);
+  void move(SDL_Rect *boundaries);
+
+protected:
   SDL_Rect renderRect;
 };
 

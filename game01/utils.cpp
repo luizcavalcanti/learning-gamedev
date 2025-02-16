@@ -1,5 +1,7 @@
+#include <SDL.h>
+#include <SDL_image.h>
+
 #include "utils.h"
-#include "SDL_render.h"
 
 SDL_Texture *Utils::loadTexture(const char *path, SDL_Renderer *renderer) {
   SDL_Texture *texture = NULL;

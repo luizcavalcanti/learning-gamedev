@@ -5,7 +5,7 @@ project('game01', 'cpp',
 sdl2_dep = dependency('sdl2')
 sdl2_img_dep = dependency('sdl2_image')
 
-sources = ['game.cpp', 'game_object.cpp', 'utils.cpp']
+sources = ['game.cpp', 'game_object.cpp', 'player.cpp', 'utils.cpp']
 
 exe = executable('game01', sources,
   install : true,

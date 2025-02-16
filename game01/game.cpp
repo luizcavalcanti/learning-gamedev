@@ -1,17 +1,16 @@
-#include "SDL_render.h"
-#include "SDL_video.h"
+#include <SDL.h>
+#include <SDL_Image.h>
 
 #include "game_object.h"
+#include "player.h"
 #include "utils.h"
 
 // game lifecycle
 bool init(void);
 bool loadAssets(void);
-void destroy(void);
-
-void processInput(void);
 void render(void);
 void update(void);
+void destroy(void);
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
@@ -22,7 +21,7 @@ SDL_Renderer *gRenderer = NULL;
 SDL_Texture *gBackgroundTexture = NULL;
 SDL_Rect gViewport = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
-GameObject player = GameObject();
+Player player = Player();
 GameObject enemy = GameObject();
 
 int main(int argc, char *argv[]) {
@@ -39,7 +38,6 @@ int main(int argc, char *argv[]) {
         quit = true;
       }
     }
-    processInput();
     update();
     render();
   }
@@ -49,22 +47,10 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-void processInput(void) {
-  const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
-  const int speed = 1;
-  player.velocity.x = 0;
-  player.velocity.y = 0;
-  if (currentKeyStates[SDL_SCANCODE_UP])
-    player.velocity.y = -speed;
-  if (currentKeyStates[SDL_SCANCODE_DOWN])
-    player.velocity.y = speed;
-  if (currentKeyStates[SDL_SCANCODE_LEFT])
-    player.velocity.x = -speed;
-  if (currentKeyStates[SDL_SCANCODE_RIGHT])
-    player.velocity.x = speed;
+void update(void) {
+  player.update();
+  player.move(&gViewport);
 }
-
-void update(void) { player.move(&gViewport); }
 
 void render(void) {
   // Clear

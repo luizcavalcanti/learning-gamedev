@@ -1,5 +1,7 @@
+#include <SDL.h>
+
+#include "SDL_render.h"
 #include "game_object.h"
-#include "SDL_rect.h"
 
 GameObject::GameObject() {
   position.x = 0;
@@ -8,9 +10,15 @@ GameObject::GameObject() {
   velocity.y = 1;
   size.x = 50;
   size.y = 50;
+  speed = 1;
 }
 
-SDL_Rect *GameObject::getRenderRect() {
+GameObject::~GameObject() {
+  SDL_DestroyTexture(sprite);
+  sprite = NULL;
+}
+
+SDL_Rect *GameObject::getRenderRect(void) {
   renderRect.x = position.x;
   renderRect.y = position.y;
   renderRect.w = size.x;

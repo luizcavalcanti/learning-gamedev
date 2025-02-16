@@ -2,7 +2,6 @@
 #define UTILS_H
 
 #include "SDL_render.h"
-#include <SDL_image.h>
 
 class Utils {
 public:
