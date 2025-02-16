@@ -20,6 +20,7 @@ const int SCREEN_HEIGHT = 720;
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
 SDL_Texture *gBackgroundTexture = NULL;
+SDL_Rect gViewport = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
 GameObject player = GameObject();
 GameObject enemy = GameObject();
@@ -61,16 +62,7 @@ void processInput(void) {
 }
 
 void update(void) {
-    int lowerBound = SCREEN_HEIGHT - player.size.x;
-    int rightBound = SCREEN_WIDTH - player.size.y;
-    if (player.position.x >= rightBound)
-        player.position.x = rightBound;
-    if (player.position.x < 0)
-        player.position.x = 0;
-    if (player.position.y >= lowerBound)
-        player.position.y = lowerBound;
-    if (player.position.y < 0)
-        player.position.y = 0;
+    player.move(&gViewport);
 }
 
 void render(void) {

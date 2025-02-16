@@ -1,14 +1,15 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
 
-#include <SDL.h>
-#include <SDL_image.h>
+#include "SDL_rect.h"
+#include "SDL_render.h"
 
 class GameObject {
  public:
     GameObject();
 
     SDL_Rect *getRenderRect();
+    void move(SDL_Rect *boundaries);
 
     SDL_Point position;
     SDL_Point velocity;
