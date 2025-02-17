@@ -1,9 +1,8 @@
-#include <SDL.h>
-#include <SDL_Image.h>
-
+#include "SDL_image.h"
 #include "game_object.h"
 #include "player.h"
 #include "utils.h"
+#include <SDL.h>
 
 // game lifecycle
 bool init(void);
