@@ -18,6 +18,7 @@ public:
   SDL_Rect *getRenderRect(void);
   void update(void);
   void move(SDL_Rect *boundaries);
+  bool checkCollision(GameObject *other);
 
 protected:
   SDL_Rect renderRect;

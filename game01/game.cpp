@@ -3,6 +3,8 @@
 #include "player.h"
 #include "utils.h"
 #include <SDL.h>
+#include <SDL_ttf.h>
+#include <cstdlib>
 
 // game lifecycle
 bool init(void);
@@ -18,10 +20,13 @@ const int SCREEN_HEIGHT = 720;
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
 SDL_Texture *gBackgroundTexture = NULL;
+TTF_Font *gFont = NULL;
 SDL_Rect gViewport = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
 Player player = Player();
-GameObject enemy = GameObject();
+GameObject apple = GameObject();
+bool appleTaken = true;
+int score = 0;
 
 int main(int argc, char *argv[]) {
   if (!(init() && loadAssets())) {
@@ -47,6 +52,17 @@ int main(int argc, char *argv[]) {
 }
 
 void update(void) {
+  if (apple.checkCollision(&player)) {
+      appleTaken = true;
+  }
+
+  if (appleTaken) {
+    score += 1;
+    apple.position.x = std::rand() % (SCREEN_WIDTH - apple.size.x);
+    apple.position.y = std::rand() % (SCREEN_HEIGHT - apple.size.y);
+    appleTaken = false;
+  }
+
   player.update();
   player.move(&gViewport);
 }
@@ -59,7 +75,8 @@ void render(void) {
   // Draw
   SDL_RenderCopy(gRenderer, gBackgroundTexture, NULL, NULL);
   SDL_RenderCopy(gRenderer, player.sprite, NULL, player.getRenderRect());
-  SDL_RenderCopy(gRenderer, enemy.sprite, NULL, enemy.getRenderRect());
+  SDL_RenderCopy(gRenderer, apple.sprite, NULL, apple.getRenderRect());
+
 
   // Render back buffer
   SDL_RenderPresent(gRenderer);
@@ -108,7 +125,12 @@ bool loadAssets(void) {
   if (playerTexture == NULL)
     return false;
   player.sprite = playerTexture;
-  enemy.sprite = playerTexture;
+
+  SDL_Texture *appleTexture =
+      Utils::loadTexture("../assets/apple.png", gRenderer);
+  if (appleTexture == NULL)
+    return false;
+  apple.sprite = appleTexture;
 
   return true;
 }

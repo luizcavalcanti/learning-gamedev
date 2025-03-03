@@ -42,3 +42,24 @@ void GameObject::move(SDL_Rect *boundaries) {
   if (position.y < 0)
     position.y = 0;
 }
+
+bool GameObject::checkCollision(GameObject *other) {
+    // Calculate the sides of rect A
+    int leftA = this->position.x;
+    int rightA = this->position.x + this->size.x;
+    int topA = this->position.y;
+    int bottomA = this->position.y + this->size.y;
+
+    //Calculate the sides of rect B
+    int leftB = other->position.x;
+    int rightB = other->position.x + other->size.x;
+    int topB = other->position.y;
+    int bottomB = other->position.y + other->size.y;
+
+    if (bottomA <= topB || topA >= bottomB ||
+        rightA <= leftB || leftA >= rightB)
+        return false;
+
+    //If none of the sides from A are outside B
+    return true;
+}
