@@ -10,6 +10,6 @@ sources = ['game.cpp', 'game_object.cpp', 'player.cpp', 'utils.cpp']
 
 exe = executable('game01', sources,
   install : true,
-  dependencies: [sdl2_dep, sdl2_img_dep])
+  dependencies: [sdl2_dep, sdl2_img_dep, sdl2_ttf_dep])
 
 test('basic', exe)

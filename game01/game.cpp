@@ -1,10 +1,13 @@
 #include "SDL_image.h"
+#include "SDL_render.h"
+#include "SDL_surface.h"
 #include "game_object.h"
 #include "player.h"
 #include "utils.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <cstdlib>
+#include <string>
 
 // game lifecycle
 bool init(void);
@@ -12,6 +15,7 @@ bool loadAssets(void);
 void render(void);
 void update(void);
 void destroy(void);
+void updateHUD(void);
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
@@ -20,8 +24,10 @@ const int SCREEN_HEIGHT = 720;
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
 SDL_Texture *gBackgroundTexture = NULL;
+SDL_Texture *scoreTexture = NULL;
 TTF_Font *gFont = NULL;
 SDL_Rect gViewport = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+SDL_Rect scoreRect = {30, 30, 0, 0};
 
 Player player = Player();
 GameObject apple = GameObject();
@@ -61,6 +67,7 @@ void update(void) {
     apple.position.x = std::rand() % (SCREEN_WIDTH - apple.size.x);
     apple.position.y = std::rand() % (SCREEN_HEIGHT - apple.size.y);
     appleTaken = false;
+    updateHUD();
   }
 
   player.update();
@@ -77,9 +84,21 @@ void render(void) {
   SDL_RenderCopy(gRenderer, player.sprite, NULL, player.getRenderRect());
   SDL_RenderCopy(gRenderer, apple.sprite, NULL, apple.getRenderRect());
 
+  // Score/HUD
+  SDL_RenderCopy(gRenderer, scoreTexture, NULL, &scoreRect);
 
   // Render back buffer
   SDL_RenderPresent(gRenderer);
+}
+
+void updateHUD(void) {
+  std::string scoreText = "Score: " +  std::to_string(score);
+  SDL_Color textColor = {255,255,255,0};
+  SDL_Surface *textSurface = TTF_RenderText_Solid(gFont, scoreText.c_str(), textColor);
+  scoreRect.w = textSurface->w;
+  scoreRect.h = textSurface->h;
+  scoreTexture = SDL_CreateTextureFromSurface(gRenderer, textSurface);
+  SDL_FreeSurface(textSurface);
 }
 
 bool init(void) {
@@ -109,6 +128,15 @@ bool init(void) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
                  "SDL_image could not initialize! SDL error: %s",
                  IMG_GetError());
+    return false;
+  }
+
+  TTF_Init();
+  gFont = TTF_OpenFont("../assets/amazing.ttf", 48);
+  if (gFont == NULL) {
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                 "TTF_OpenFont could not initialize! TTF error: %s",
+                 TTF_GetError());
     return false;
   }
 
