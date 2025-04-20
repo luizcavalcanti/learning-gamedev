@@ -12,4 +12,7 @@ exe = executable('game01', sources,
   install : true,
   dependencies: [sdl2_dep, sdl2_img_dep, sdl2_ttf_dep])
 
+#install_data('myapp.icns', install_dir : 'Contents/Resources')
+#install_data('Info.plist', install_dir : 'Contents')
+
 test('basic', exe)
