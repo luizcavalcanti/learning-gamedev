@@ -132,7 +132,7 @@ bool init(void) {
   }
 
   TTF_Init();
-  gFont = TTF_OpenFont("../assets/amazing.ttf", 48);
+  gFont = TTF_OpenFont("assets/amazing.ttf", 48);
   if (gFont == NULL) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
                  "TTF_OpenFont could not initialize! TTF error: %s",
@@ -144,18 +144,18 @@ bool init(void) {
 }
 
 bool loadAssets(void) {
-  gBackgroundTexture = Utils::loadTexture("../assets/texture.jpg", gRenderer);
+  gBackgroundTexture = Utils::loadTexture("assets/texture.jpg", gRenderer);
   if (gBackgroundTexture == NULL)
     return false;
 
   SDL_Texture *playerTexture =
-      Utils::loadTexture("../assets/player.png", gRenderer);
+      Utils::loadTexture("assets/player.png", gRenderer);
   if (playerTexture == NULL)
     return false;
   player.sprite = playerTexture;
 
   SDL_Texture *appleTexture =
-      Utils::loadTexture("../assets/apple.png", gRenderer);
+      Utils::loadTexture("assets/apple.png", gRenderer);
   if (appleTexture == NULL)
     return false;
   apple.sprite = appleTexture;
